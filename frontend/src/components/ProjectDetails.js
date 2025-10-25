@@ -113,6 +113,7 @@ const ProjectDetails = ({ account, signer }) => {
         project_id: id,
         milestone_id: expenditureForm.milestone_id || null,
         amount: parseFloat(expenditureForm.amount),
+        category: expenditureForm.category,
         description: expenditureForm.description,
         recipient: expenditureForm.recipient,
         tx_hash: simulatedTxHash
@@ -120,7 +121,7 @@ const ProjectDetails = ({ account, signer }) => {
 
       toast.success('Expenditure recorded successfully!');
       setShowExpenditureDialog(false);
-      setExpenditureForm({ milestone_id: '', amount: '', description: '', recipient: '' });
+      setExpenditureForm({ milestone_id: '', amount: '', category: 'General', description: '', recipient: '' });
       fetchProjectData();
     } catch (error) {
       console.error('Error recording expenditure:', error);
