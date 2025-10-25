@@ -38,7 +38,7 @@
 
 ### Method 2: Direct URL
 ```
-https://civic-ledger.preview.emergentagent.com/authority/login
+https://transparify.preview.emergentagent.com/authority/login
 ```
 
 ---
@@ -288,13 +288,13 @@ Below: List of project cards with [Review Project] buttons
 ### URLs to Bookmark:
 ```
 Main Dashboard:
-https://civic-ledger.preview.emergentagent.com
+https://transparify.preview.emergentagent.com
 
 Authority Login:
-https://civic-ledger.preview.emergentagent.com/authority/login
+https://transparify.preview.emergentagent.com/authority/login
 
 Authority Dashboard (after login):
-https://civic-ledger.preview.emergentagent.com/authority/dashboard
+https://transparify.preview.emergentagent.com/authority/dashboard
 ```
 
 ### Files to Know:

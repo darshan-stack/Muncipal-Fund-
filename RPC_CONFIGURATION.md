@@ -309,7 +309,7 @@ POLYGON_RPC_URL="https://rpc-mumbai.maticvigil.com"
 
 ### Frontend (`/app/frontend/.env`)
 ```env
-REACT_APP_BACKEND_URL=https://civic-ledger.preview.emergentagent.com
+REACT_APP_BACKEND_URL=https://transparify.preview.emergentagent.com
 WDS_SOCKET_PORT=443
 REACT_APP_ENABLE_VISUAL_EDITS=true
 ENABLE_HEALTH_CHECK=false
@@ -341,7 +341,7 @@ ENABLE_HEALTH_CHECK=false
 
 ### Check Backend Blockchain Connection
 ```bash
-curl https://civic-ledger.preview.emergentagent.com/api/blockchain/status
+curl https://transparify.preview.emergentagent.com/api/blockchain/status
 ```
 
 Response:
@@ -412,4 +412,4 @@ Response:
 ✅ **Backend**: Configured in `/app/backend/.env`
 ✅ **Frontend**: Auto-configured via MetaMask
 
-**Access Application**: https://civic-ledger.preview.emergentagent.com
+**Access Application**: https://transparify.preview.emergentagent.com

@@ -328,6 +328,6 @@ As a citizen, you have the right to know:
 
 *CivicLedger - Empowering citizens through transparency* 🏛️🔍
 
-**Access the platform**: https://civic-ledger.preview.emergentagent.com
+**Access the platform**: https://transparify.preview.emergentagent.com
 
 Remember: Transparency isn't just about seeing the numbers—it's about understanding them and holding officials accountable. This platform gives you the power to do both.

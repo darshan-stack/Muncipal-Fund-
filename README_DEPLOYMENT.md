@@ -346,8 +346,8 @@ tail -f /var/log/supervisor/frontend.err.log
 
 ## 🌐 Access Application
 
-- **Frontend**: https://civic-ledger.preview.emergentagent.com
-- **Backend API**: https://civic-ledger.preview.emergentagent.com/api
+- **Frontend**: https://transparify.preview.emergentagent.com
+- **Backend API**: https://transparify.preview.emergentagent.com/api
 
 ## 💡 Getting Started
 

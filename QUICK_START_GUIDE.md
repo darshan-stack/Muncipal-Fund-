@@ -17,7 +17,7 @@
 ### Phase 1: Project Manager Creates Project
 
 **1. Access the Platform:**
-- URL: https://civic-ledger.preview.emergentagent.com
+- URL: https://transparify.preview.emergentagent.com
 
 **2. Connect MetaMask:**
 - Click "Connect Wallet"
@@ -47,7 +47,7 @@
 ### Phase 2: Higher Authority Reviews (ANONYMOUS)
 
 **1. Access Authority Dashboard:**
-- Go to: https://civic-ledger.preview.emergentagent.com/authority/login
+- Go to: https://transparify.preview.emergentagent.com/authority/login
 - Username: `admin`
 - Password: `admin123`
 - Click "Login"
@@ -103,18 +103,18 @@
 ## 🔑 Access Points
 
 ### For Project Managers:
-- **Main Dashboard**: https://civic-ledger.preview.emergentagent.com
+- **Main Dashboard**: https://transparify.preview.emergentagent.com
 - Connect MetaMask
 - Create and manage projects
 
 ### For Higher Authorities:
-- **Authority Login**: https://civic-ledger.preview.emergentagent.com/authority/login
+- **Authority Login**: https://transparify.preview.emergentagent.com/authority/login
 - **Username**: admin
 - **Password**: admin123
 - Review and approve projects
 
 ### For Citizens:
-- **Public Dashboard**: https://civic-ledger.preview.emergentagent.com
+- **Public Dashboard**: https://transparify.preview.emergentagent.com
 - No login required
 - View all approved projects
 - Access all documentation
@@ -329,8 +329,8 @@ Now shows:
 5. View as citizen
 
 **Access URLs:**
-- Main: https://civic-ledger.preview.emergentagent.com
-- Authority: https://civic-ledger.preview.emergentagent.com/authority/login
+- Main: https://transparify.preview.emergentagent.com
+- Authority: https://transparify.preview.emergentagent.com/authority/login
 
 **Demo Credentials:**
 - Username: `admin`

@@ -27,7 +27,7 @@
 
 #### Step 1: Access Platform
 ```
-URL: https://civic-ledger.preview.emergentagent.com
+URL: https://transparify.preview.emergentagent.com
 ```
 
 #### Step 2: Connect MetaMask
@@ -274,7 +274,7 @@ Won't appear on PolygonScan ❌
 
 ### Main Application
 ```
-URL: https://civic-ledger.preview.emergentagent.com
+URL: https://transparify.preview.emergentagent.com
 
 Features:
 - Dashboard (all projects)
@@ -285,7 +285,7 @@ Features:
 
 ### Higher Authority
 ```
-URL: https://civic-ledger.preview.emergentagent.com/authority/login
+URL: https://transparify.preview.emergentagent.com/authority/login
 
 Login:
 - Username: admin
@@ -467,8 +467,8 @@ UnderReview (Authority viewing - Contractor HIDDEN)
 ## 📞 Quick Reference
 
 ### URLs:
-- **Main**: https://civic-ledger.preview.emergentagent.com
-- **Authority Login**: https://civic-ledger.preview.emergentagent.com/authority/login
+- **Main**: https://transparify.preview.emergentagent.com
+- **Authority Login**: https://transparify.preview.emergentagent.com/authority/login
 - **Polygon Faucet**: https://faucet.polygon.technology/
 - **Remix IDE**: https://remix.ethereum.org/
 - **PolygonScan Mumbai**: https://mumbai.polygonscan.com/

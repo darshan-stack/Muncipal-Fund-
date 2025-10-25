@@ -133,7 +133,7 @@ Follow instructions in `/contracts/README.md`
 
 ## 📱 Live Demo
 
-**Access the live platform**: https://civic-ledger.preview.emergentagent.com
+**Access the live platform**: https://transparify.preview.emergentagent.com
 
 **Features to Try:**
 1. Connect MetaMask wallet
@@ -268,7 +268,7 @@ All documentation is in the repository:
 ## 🌐 Key URLs
 
 - **Repository**: https://github.com/darshan-stack/Muncipal-Fund-
-- **Live Demo**: https://civic-ledger.preview.emergentagent.com
+- **Live Demo**: https://transparify.preview.emergentagent.com
 - **Polygon Mumbai**: https://mumbai.polygonscan.com/
 - **Polygon Faucet**: https://faucet.polygon.technology/
 
