@@ -335,16 +335,18 @@ const Dashboard = ({ account }) => {
                         </div>
                         <div className="flex space-x-2">
                           {project.tx_hash && (
-                            <a
-                              href={`https://mumbai.polygonscan.com/tx/${project.tx_hash}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={() => handleVerifyTransaction(
+                                project.tx_hash,
+                                'project_create',
+                                { name: project.name, budget: project.budget, category: project.category }
+                              )}
                               className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                               data-testid={`verify-tx-${index}`}
-                              title="View on Blockchain (Note: Simulated transactions won't appear on testnet)"
+                              title="View Transaction Details"
                             >
                               <ExternalLink className="w-4 h-4 text-blue-400" />
-                            </a>
+                            </button>
                           )}
                           <Link to={`/project/${project.id}`}>
                             <Button size="sm" className="bg-blue-500 hover:bg-blue-600" data-testid={`view-details-${index}`}>
