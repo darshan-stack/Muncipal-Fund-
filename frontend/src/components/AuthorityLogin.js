@@ -38,7 +38,7 @@ const AuthorityLogin = ({ onLoginSuccess }) => {
       if (response.data.success) {
         localStorage.setItem('authority', JSON.stringify(response.data.authority));
         toast.success('Login successful!');
-        onLoginSuccess(response.data.authority);
+        navigate('/authority/dashboard');
       }
     } catch (error) {
       console.error('Login error:', error);
