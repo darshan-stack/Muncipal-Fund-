@@ -575,15 +575,17 @@ const ProjectDetails = ({ account, signer }) => {
                             <span className="font-medium">Recipient:</span> <span className="font-mono">{exp.recipient}</span>
                           </div>
                         </div>
-                        <a
-                          href={`https://mumbai.polygonscan.com/tx/${exp.tx_hash}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                        <button
+                          onClick={() => handleVerifyTransaction(
+                            exp.tx_hash,
+                            'expenditure',
+                            { amount: exp.amount, category: exp.category, description: exp.description, recipient: exp.recipient }
+                          )}
                           className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                           data-testid={`expenditure-tx-${index}`}
                         >
                           <ExternalLink className="w-4 h-4 text-blue-400" />
-                        </a>
+                        </button>
                       </div>
                     </CardContent>
                   </Card>
