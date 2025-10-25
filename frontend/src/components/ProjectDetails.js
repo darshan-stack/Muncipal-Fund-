@@ -291,16 +291,18 @@ const ProjectDetails = ({ account, signer }) => {
                 <p className="text-sm font-mono text-white" data-testid="project-manager">{project.manager_address}</p>
               </div>
               {project.tx_hash && (
-                <a
-                  href={`https://mumbai.polygonscan.com/tx/${project.tx_hash}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => handleVerifyTransaction(
+                    project.tx_hash,
+                    'project_create',
+                    { name: project.name, budget: project.budget, category: project.category || 'N/A' }
+                  )}
                   className="flex items-center space-x-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                   data-testid="view-blockchain-btn"
                 >
                   <ExternalLink className="w-4 h-4 text-blue-400" />
-                  <span className="text-sm text-slate-300">View on Blockchain</span>
-                </a>
+                  <span className="text-sm text-slate-300">View Transaction</span>
+                </button>
               )}
             </div>
           </CardContent>
