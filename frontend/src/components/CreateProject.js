@@ -115,6 +115,27 @@ const CreateProject = ({ account, signer }) => {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="category" className="text-slate-300">Project Category</Label>
+                <select
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 bg-slate-800/50 border border-slate-700 rounded-md text-white"
+                  data-testid="project-category-select"
+                >
+                  <option value="Infrastructure">Infrastructure</option>
+                  <option value="Education">Education</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Environment">Environment</option>
+                  <option value="Transportation">Transportation</option>
+                  <option value="Public Safety">Public Safety</option>
+                  <option value="Community Services">Community Services</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div className="space-y-2">
                 <Label htmlFor="description" className="text-slate-300">Description</Label>
                 <Textarea
                   id="description"
