@@ -422,17 +422,58 @@ startxref
     def test_approval_decision_approve(self):
         """Test approval decision API - Approve"""
         try:
-            if 'approval_id' not in self.test_data:
-                self.log_result("Approval Decision (Approve)", False, "No approval ID available")
+            # Create a fresh project for approval testing
+            project_data = {
+                "name": "Test Approval Project",
+                "description": "Project for testing approval workflow",
+                "category": "Infrastructure",
+                "budget": 150000.0,
+                "contractor_name": "Approval Test Contractor",
+                "contractor_wallet": "0x742d35Cc6634C0532925a3b8D4C2C4e4C4C4C4C6",
+                "manager_address": "0x123456789abcdef123456789abcdef123456789c"
+            }
+            
+            project_response = self.session.post(f"{API_URL}/projects", json=project_data)
+            if project_response.status_code != 200:
+                self.log_result("Approval Decision (Approve) - Project Creation", False, "Could not create test project")
                 return False
             
+            approve_project_id = project_response.json()['id']
+            
+            # Submit for approval
+            submit_response = self.session.post(f"{API_URL}/projects/{approve_project_id}/submit-approval")
+            if submit_response.status_code != 200:
+                self.log_result("Approval Decision (Approve) - Submit", False, "Could not submit project")
+                return False
+            
+            # Wait for processing
+            time.sleep(1)
+            
+            # Get pending approvals to find the new approval
+            approvals_response = self.session.get(f"{API_URL}/approvals/pending/{self.test_data['authority_id']}")
+            if approvals_response.status_code != 200:
+                self.log_result("Approval Decision (Approve) - Get Approvals", False, "Could not get approvals")
+                return False
+            
+            approvals = approvals_response.json()
+            approve_approval_id = None
+            for approval in approvals:
+                if approval.get('project', {}).get('id') == approve_project_id:
+                    approve_approval_id = approval['id']
+                    break
+            
+            if not approve_approval_id:
+                self.log_result("Approval Decision (Approve)", False, "Could not find approval for approval test")
+                return False
+            
+            # Approve the project
             decision_data = {
                 "decision": "Approved",
                 "comments": "Project meets all municipal requirements and budget allocation is appropriate."
             }
             
             response = self.session.post(
-                f"{API_URL}/approvals/{self.test_data['approval_id']}/decide",
+                f"{API_URL}/approvals/{approve_approval_id}/decide",
                 json=decision_data
             )
             
@@ -443,7 +484,7 @@ startxref
                                   f"Project approved successfully. TX Hash: {result.get('tx_hash', 'N/A')}")
                     
                     # Verify project status updated
-                    project_response = self.session.get(f"{API_URL}/projects/{self.test_data['project_id']}")
+                    project_response = self.session.get(f"{API_URL}/projects/{approve_project_id}")
                     if project_response.status_code == 200:
                         project = project_response.json()
                         if project.get('status') == 'Approved' and project.get('allocated_funds') > 0:
