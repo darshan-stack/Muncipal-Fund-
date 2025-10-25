@@ -6,6 +6,7 @@ import { Button } from './ui/button';
 import { Progress } from './ui/progress';
 import { Plus, TrendingUp, DollarSign, FolderOpen, CheckCircle2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import TransactionVerificationModal from './TransactionVerificationModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -14,6 +15,12 @@ const Dashboard = ({ account }) => {
   const [projects, setProjects] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [verificationModal, setVerificationModal] = useState({
+    isOpen: false,
+    txHash: '',
+    type: '',
+    details: {}
+  });
 
   useEffect(() => {   
     fetchData();
