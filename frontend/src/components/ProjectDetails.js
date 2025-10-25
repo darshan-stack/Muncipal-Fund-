@@ -242,9 +242,31 @@ const ProjectDetails = ({ account, signer }) => {
                 </CardTitle>
                 <p className="text-slate-400">{project.description}</p>
               </div>
-              <span className={project.status === 'Active' ? 'status-active' : 'status-completed'}>
-                {project.status}
-              </span>
+              <div className="flex items-center space-x-2">
+                <span className={
+                  project.status === 'Approved' ? 'status-completed' :
+                  project.status === 'Active' ? 'status-active' :
+                  project.status === 'PendingApproval' ? 'status-pending' :
+                  project.status === 'Rejected' ? 'bg-red-500/20 text-red-400 px-3 py-1 rounded-full text-sm font-semibold' :
+                  'status-pending'
+                }>
+                  {project.status}
+                </span>
+                {project.status === 'Draft' && isManager && (
+                  <Button
+                    onClick={handleSubmitForApproval}
+                    disabled={submittingApproval}
+                    className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white"
+                    data-testid="submit-approval-btn"
+                  >
+                    {submittingApproval ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Submitting...</>
+                    ) : (
+                      'Submit for Approval'
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
