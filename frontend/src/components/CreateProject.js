@@ -167,6 +167,32 @@ const CreateProject = ({ account, signer }) => {
                 />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="contractor_name" className="text-slate-300">Contractor Name</Label>
+                <Input
+                  id="contractor_name"
+                  name="contractor_name"
+                  placeholder="e.g., ABC Construction Ltd."
+                  value={formData.contractor_name}
+                  onChange={handleChange}
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                  data-testid="contractor-name-input"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="contractor_wallet" className="text-slate-300">Contractor Wallet Address (Optional)</Label>
+                <Input
+                  id="contractor_wallet"
+                  name="contractor_wallet"
+                  placeholder="0x... (leave empty to use your address)"
+                  value={formData.contractor_wallet}
+                  onChange={handleChange}
+                  className="bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+                  data-testid="contractor-wallet-input"
+                />
+              </div>
+
               <div className="bg-slate-800/30 border border-slate-700 rounded-lg p-4 space-y-2">
                 <p className="text-sm font-medium text-slate-300">Project Manager</p>
                 <p className="text-xs font-mono text-slate-400 break-all" data-testid="manager-address">{account}</p>
