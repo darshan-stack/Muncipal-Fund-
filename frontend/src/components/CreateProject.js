@@ -60,6 +60,7 @@ const CreateProject = ({ account, signer }) => {
       const response = await axios.post(`${API}/projects`, {
         name: formData.name,
         description: formData.description,
+        category: formData.category,
         budget: parseFloat(formData.budget),
         manager_address: account,
         tx_hash: simulatedTxHash,
