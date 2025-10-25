@@ -645,6 +645,126 @@ async def get_approved_projects():
     projects = await db.projects.find({"status": "Approved"}, {"_id": 0}).to_list(1000)
     return projects
 
+# ==================== DOCUMENT UPLOAD & MANAGEMENT ENDPOINTS ====================
+
+@api_router.post("/projects/{project_id}/upload-document")
+async def upload_document(
+    project_id: str,
+    file: UploadFile = File(...),
+    document_type: str = Form(...),
+    uploaded_by: str = Form(...)
+):
+    """Upload document for a project"""
+    try:
+        # Verify project exists
+        project = await db.projects.find_one({"id": project_id})
+        if not project:
+            raise HTTPException(status_code=404, detail="Project not found")
+        
+        # Read file content
+        file_content = await file.read()
+        file_size = len(file_content)
+        
+        # Create uploads directory if not exists
+        uploads_dir = Path("/app/backend/uploads")
+        uploads_dir.mkdir(exist_ok=True)
+        
+        # Save file temporarily
+        file_path = uploads_dir / f"{uuid.uuid4()}_{file.filename}"
+        with open(file_path, "wb") as f:
+            f.write(file_content)
+        
+        # Process document based on type
+        metadata = {}
+        
+        # Extract GPS from photos
+        if document_type in ['gps_photos', 'site_photos'] and file.content_type and 'image' in file.content_type:
+            gps_data = document_processor.extract_gps_from_image(file_content)
+            if gps_data:
+                metadata['gps_data'] = gps_data
+        
+        # Get file hash
+        file_hash = document_processor.get_file_hash(file_content)
+        metadata['file_hash'] = file_hash
+        
+        # Upload to IPFS (simulated)
+        ipfs_result = ipfs_service.upload_file(str(file_path), file.filename)
+        ipfs_hash = ipfs_result['IpfsHash']
+        ipfs_url = ipfs_service.get_gateway_url(ipfs_hash)
+        
+        # Store document record
+        document = {
+            "id": str(uuid.uuid4()),
+            "project_id": project_id,
+            "file_name": file.filename,
+            "file_size": file_size,
+            "file_type": file.content_type or 'application/octet-stream',
+            "document_type": document_type,
+            "ipfs_hash": ipfs_hash,
+            "ipfs_url": ipfs_url,
+            "file_hash": file_hash,
+            "uploaded_by": uploaded_by,
+            "uploaded_at": datetime.now(timezone.utc).isoformat(),
+            "metadata": metadata,
+            "gps_data": metadata.get('gps_data'),
+            "verified": True if metadata.get('gps_data') else False
+        }
+        
+        await db.documents.insert_one(document)
+        
+        # Clean up temp file
+        try:
+            os.remove(file_path)
+        except:
+            pass
+        
+        return {
+            "success": True,
+            "document_id": document['id'],
+            "ipfs_hash": ipfs_hash,
+            "ipfs_url": ipfs_url,
+            "gps_verified": bool(metadata.get('gps_data'))
+        }
+        
+    except Exception as e:
+        logger.error(f"Document upload error: {e}")
+        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+@api_router.get("/projects/{project_id}/documents")
+async def get_project_documents(project_id: str):
+    """Get all documents for a project"""
+    try:
+        documents = await db.documents.find(
+            {"project_id": project_id},
+            {"_id": 0}
+        ).to_list(1000)
+        
+        return documents
+        
+    except Exception as e:
+        logger.error(f"Error fetching documents: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@api_router.delete("/projects/{project_id}/documents/{document_id}")
+async def delete_document(project_id: str, document_id: str):
+    """Delete a document"""
+    try:
+        result = await db.documents.delete_one({
+            "id": document_id,
+            "project_id": project_id
+        })
+        
+        if result.deleted_count == 0:
+            raise HTTPException(status_code=404, detail="Document not found")
+        
+        return {"success": True, "message": "Document deleted"}
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting document: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Include router
 app.include_router(api_router)
 
