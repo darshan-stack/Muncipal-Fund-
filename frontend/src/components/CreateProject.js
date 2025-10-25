@@ -18,6 +18,7 @@ const CreateProject = ({ account, signer }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
+    category: 'Infrastructure',
     budget: ''
   });
 
