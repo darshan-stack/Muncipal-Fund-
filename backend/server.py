@@ -404,6 +404,8 @@ async def verify_transaction(tx_hash: str):
 async def get_stats():
     total_projects = await db.projects.count_documents({})
     active_projects = await db.projects.count_documents({"status": "Active"})
+    approved_projects = await db.projects.count_documents({"status": "Approved"})
+    pending_approvals = await db.projects.count_documents({"status": {"$in": ["PendingApproval", "UnderReview"]}})
     total_milestones = await db.milestones.count_documents({})
     completed_milestones = await db.milestones.count_documents({"status": "Completed"})
     total_expenditures = await db.expenditures.count_documents({})
@@ -432,6 +434,8 @@ async def get_stats():
     return {
         "total_projects": total_projects,
         "active_projects": active_projects,
+        "approved_projects": approved_projects,
+        "pending_approvals": pending_approvals,
         "total_milestones": total_milestones,
         "completed_milestones": completed_milestones,
         "total_expenditures": total_expenditures,
@@ -447,6 +451,187 @@ async def get_stats():
         "budget_by_project_category": project_category_budget,
         "spent_by_project_category": project_category_spent
     }
+
+# ==================== HIGHER AUTHORITY & APPROVAL ENDPOINTS ====================
+
+@api_router.post("/auth/authority/login")
+async def authority_login(credentials: dict):
+    """Authority login"""
+    authority = await db.authorities.find_one({"username": credentials['username']}, {"_id": 0})
+    
+    if not authority or authority['password'] != credentials['password']:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    return {
+        "success": True,
+        "authority": {
+            "id": authority['id'],
+            "name": authority['name'],
+            "department": authority['department']
+        }
+    }
+
+@api_router.post("/auth/authority/register")
+async def register_authority(authority_data: dict):
+    """Register new authority"""
+    from datetime import datetime, timezone
+    import uuid
+    
+    authority = {
+        "id": str(uuid.uuid4()),
+        "username": authority_data['username'],
+        "password": authority_data['password'],
+        "name": authority_data['name'],
+        "department": authority_data.get('department', 'Municipal Office'),
+        "active_reviews": 0,
+        "total_reviewed": 0,
+        "joined_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.authorities.insert_one(authority)
+    return {"success": True, "authority_id": authority['id']}
+
+@api_router.post("/projects/{project_id}/submit-approval")
+async def submit_for_approval(project_id: str):
+    """Submit project for approval"""
+    from datetime import datetime, timezone
+    import uuid
+    
+    project = await db.projects.find_one({"id": project_id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    # Get next available reviewer
+    authorities = await db.authorities.find({}, {"_id": 0}).sort("active_reviews", 1).to_list(10)
+    if not authorities:
+        raise HTTPException(status_code=503, detail="No reviewers available. Please register authorities first.")
+    
+    reviewer_id = authorities[0]['id']
+    
+    # Generate tx hash
+    tx_hash = '0x' + ''.join([hex(int(x))[2:] for x in os.urandom(32)])
+    
+    # Update project
+    await db.projects.update_one(
+        {"id": project_id},
+        {"$set": {
+            "status": "PendingApproval",
+            "submitted_at": datetime.now(timezone.utc).isoformat(),
+            "reviewer_id": reviewer_id,
+            "is_anonymous": True,
+            "tx_hash": tx_hash
+        }}
+    )
+    
+    # Create approval request
+    approval = {
+        "id": str(uuid.uuid4()),
+        "project_id": project_id,
+        "reviewer_id": reviewer_id,
+        "assigned_at": datetime.now(timezone.utc).isoformat(),
+        "status": "Pending"
+    }
+    
+    await db.approval_requests.insert_one(approval)
+    
+    # Update reviewer count
+    await db.authorities.update_one(
+        {"id": reviewer_id},
+        {"$inc": {"active_reviews": 1}}
+    )
+    
+    return {"success": True, "message": "Project submitted for approval", "tx_hash": tx_hash}
+
+@api_router.get("/approvals/pending/{authority_id}")
+async def get_pending_approvals(authority_id: str):
+    """Get pending approvals for authority"""
+    approvals = await db.approval_requests.find(
+        {"reviewer_id": authority_id, "status": "Pending"},
+        {"_id": 0}
+    ).to_list(100)
+    
+    for approval in approvals:
+        project = await db.projects.find_one({"id": approval['project_id']}, {"_id": 0})
+        if project:
+            approval['project'] = {
+                "id": project['id'],
+                "name": project['name'],
+                "description": project['description'],
+                "category": project['category'],
+                "budget": project['budget'],
+                "status": project['status'],
+                "contractor_name": "[REDACTED]",
+                "contractor_wallet": "[HIDDEN]",
+                "submitted_at": project.get('submitted_at')
+            }
+    
+    return approvals
+
+@api_router.post("/approvals/{approval_id}/decide")
+async def decide_approval(approval_id: str, decision: dict):
+    """Approve or reject project"""
+    from datetime import datetime, timezone
+    import uuid
+    
+    approval = await db.approval_requests.find_one({"id": approval_id})
+    if not approval:
+        raise HTTPException(status_code=404, detail="Approval not found")
+    
+    tx_hash = '0x' + ''.join([hex(int(x))[2:] for x in os.urandom(32)])
+    
+    # Update approval
+    await db.approval_requests.update_one(
+        {"id": approval_id},
+        {"$set": {
+            "status": decision['decision'],
+            "review_comments": decision.get('comments'),
+            "reviewed_at": datetime.now(timezone.utc).isoformat(),
+            "approval_tx_hash": tx_hash
+        }}
+    )
+    
+    # Update project
+    project_status = "Approved" if decision['decision'] == "Approved" else "Rejected"
+    project_update = {
+        "status": project_status,
+        "is_anonymous": False if decision['decision'] == "Approved" else True
+    }
+    
+    if decision['decision'] == "Approved":
+        project = await db.projects.find_one({"id": approval['project_id']})
+        project_update["approved_at"] = datetime.now(timezone.utc).isoformat()
+        project_update["allocated_funds"] = project['budget']
+    else:
+        project_update["rejection_reason"] = decision.get('comments')
+    
+    await db.projects.update_one({"id": approval['project_id']}, {"$set": project_update})
+    
+    # Update reviewer stats
+    await db.authorities.update_one(
+        {"id": approval['reviewer_id']},
+        {"$inc": {"active_reviews": -1, "total_reviewed": 1}}
+    )
+    
+    # Record transaction
+    tx_record = {
+        "id": str(uuid.uuid4()),
+        "tx_hash": tx_hash,
+        "type": "project_approval" if decision['decision'] == "Approved" else "project_rejection",
+        "project_id": approval['project_id'],
+        "details": {"decision": decision['decision'], "comments": decision.get('comments')},
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "verified": False
+    }
+    
+    await db.transactions.insert_one(tx_record)
+    
+    return {"success": True, "decision": decision['decision'], "tx_hash": tx_hash}
+
+@api_router.get("/public/projects/approved")
+async def get_approved_projects():
+    """Get approved projects for citizens"""
+    projects = await db.projects.find({"status": "Approved"}, {"_id": 0}).to_list(1000)
+    return projects
 
 # Include router
 app.include_router(api_router)
