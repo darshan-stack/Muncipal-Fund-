@@ -167,11 +167,11 @@ function App() {
           />
           <Route 
             path="/authority/login" 
-            element={<AuthorityLogin onLoginSuccess={() => {}} />} 
+            element={<AuthorityWalletDashboard account={account} onDisconnect={disconnectWallet} />} 
           />
           <Route 
             path="/authority/dashboard" 
-            element={<AuthorityDashboard />} 
+            element={<AuthorityWalletDashboard account={account} onDisconnect={disconnectWallet} />} 
           />
         </Routes>
       </BrowserRouter>
