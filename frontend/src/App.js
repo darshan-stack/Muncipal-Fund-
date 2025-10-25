@@ -6,6 +6,8 @@ import Dashboard from './components/Dashboard';
 import ProjectDetails from './components/ProjectDetails';
 import CreateProject from './components/CreateProject';
 import TransactionHistory from './components/TransactionHistory';
+import AuthorityLogin from './components/AuthorityLogin';
+import AuthorityDashboard from './components/AuthorityDashboard';
 import Header from './components/Header';
 import { Toaster } from './components/ui/sonner';
 
