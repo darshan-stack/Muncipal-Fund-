@@ -325,6 +325,7 @@ const Dashboard = ({ account }) => {
                               rel="noopener noreferrer"
                               className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition-colors"
                               data-testid={`verify-tx-${index}`}
+                              title="View on Blockchain (Note: Simulated transactions won't appear on testnet)"
                             >
                               <ExternalLink className="w-4 h-4 text-blue-400" />
                             </a>
