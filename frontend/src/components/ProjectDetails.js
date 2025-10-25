@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { ArrowLeft, Plus, ExternalLink, CheckCircle2, Clock, DollarSign, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import TransactionVerificationModal from './TransactionVerificationModal';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -25,6 +26,12 @@ const ProjectDetails = ({ account, signer }) => {
   const [showMilestoneDialog, setShowMilestoneDialog] = useState(false);
   const [showExpenditureDialog, setShowExpenditureDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [verificationModal, setVerificationModal] = useState({
+    isOpen: false,
+    txHash: '',
+    type: '',
+    details: {}
+  });
 
   const [milestoneForm, setMilestoneForm] = useState({
     name: '',
