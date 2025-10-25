@@ -153,7 +153,7 @@ function App() {
             path="/create" 
             element={
               account ? (
-                <CreateProject 
+                <CreateProjectWithDocuments 
                   account={account}
                   signer={signer}
                 />
