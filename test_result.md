@@ -240,16 +240,18 @@ metadata:
 
 test_plan:
   current_focus:
-    - "Authority Wallet Dashboard"
-    - "Create Project With Documents"
     - "Authority Dashboard (Username/Password)"
+    - "Authority Wallet Dashboard"
   stuck_tasks:
     - "Authority Wallet Dashboard"
+    - "Authority Dashboard (Username/Password)"
   test_all: false
-  test_priority: "high_first"
+  test_priority: "stuck_first"
 
 agent_communication:
   - agent: "main"
     message: "Phase 1 Complete: Added missing document upload/retrieval endpoints to backend. Integrated ipfs_service and document_processor. Backend restarted successfully. Ready for backend testing. Focus on: 1) Document upload/retrieval 2) Approval workflow 3) Project creation flow with documents."
   - agent: "testing"
     message: "✅ BACKEND TESTING COMPLETE: All high-priority backend APIs are working perfectly with 100% success rate. Comprehensive testing completed for: 1) Document Upload/Retrieval APIs - Full multipart upload, IPFS integration, GPS extraction, file hashing 2) Project Creation API - Proper project lifecycle management 3) Complete Approval Workflow - Authority registration/login, project submission, anonymized pending approvals, approval/rejection decisions with proper status updates and fund allocation. All APIs handle edge cases properly and return appropriate responses. Backend is production-ready. IPFS service is **mocked** but functional for MVP. Ready for frontend integration testing."
+  - agent: "testing"
+    message: "🔍 FRONTEND TESTING COMPLETE: Found CRITICAL routing issue blocking authority dashboard access. Public Dashboard (✅ working), Create Project (✅ working with proper wallet protection), but Authority Dashboard has broken routing - both /authority/login and /authority/dashboard use AuthorityWalletDashboard component instead of AuthorityLogin form. This prevents username/password authority login completely. AuthorityLogin component exists but unused in App.js routing. URGENT FIX NEEDED: Update App.js routes to use AuthorityLogin component for /authority/login route."
