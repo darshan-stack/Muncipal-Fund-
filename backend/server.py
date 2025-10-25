@@ -34,12 +34,19 @@ class Project(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     description: str
-    category: str = "Infrastructure"  # Infrastructure, Education, Healthcare, Environment, etc.
+    category: str = "Infrastructure"
     budget: float
     allocated_funds: float = 0.0
     spent_funds: float = 0.0
+    contractor_name: str = ""
+    contractor_wallet: str = ""
     manager_address: str
-    status: str = "Active"  # Active, Completed, Paused
+    status: str = "Draft"  # Draft, Active, PendingApproval, Approved, Rejected
+    is_anonymous: bool = False
+    submitted_at: Optional[datetime] = None
+    approved_at: Optional[datetime] = None
+    reviewer_id: Optional[str] = None
+    rejection_reason: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     tx_hash: Optional[str] = None
     contract_project_id: Optional[int] = None
@@ -49,6 +56,8 @@ class ProjectCreate(BaseModel):
     description: str
     category: str
     budget: float
+    contractor_name: str = ""
+    contractor_wallet: str = ""
     manager_address: str
     tx_hash: Optional[str] = None
     contract_project_id: Optional[int] = None
