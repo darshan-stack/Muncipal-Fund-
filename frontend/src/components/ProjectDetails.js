@@ -212,29 +212,59 @@ const ProjectDetails = ({ account, signer }) => {
             </div>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <div className="space-y-2">
                 <p className="text-sm text-slate-400">Total Budget</p>
                 <p className="text-2xl font-bold text-white" data-testid="project-budget">{formatCurrency(project.budget)}</p>
               </div>
               <div className="space-y-2">
-                <p className="text-sm text-slate-400">Spent Funds</p>
-                <p className="text-2xl font-bold text-blue-400" data-testid="project-spent">{formatCurrency(project.spent_funds)}</p>
+                <p className="text-sm text-slate-400">Allocated Funds</p>
+                <p className="text-2xl font-bold text-green-400" data-testid="project-allocated">{formatCurrency(project.allocated_funds)}</p>
+                <p className="text-xs text-slate-500">{((project.allocated_funds / project.budget) * 100).toFixed(1)}% allocated</p>
               </div>
               <div className="space-y-2">
-                <p className="text-sm text-slate-400">Remaining</p>
-                <p className="text-2xl font-bold text-green-400" data-testid="project-remaining">
-                  {formatCurrency(project.budget - project.spent_funds)}
+                <p className="text-sm text-slate-400">Spent Funds</p>
+                <p className="text-2xl font-bold text-purple-400" data-testid="project-spent">{formatCurrency(project.spent_funds)}</p>
+                <p className="text-xs text-slate-500">{((project.spent_funds / project.allocated_funds) * 100 || 0).toFixed(1)}% of allocated</p>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm text-slate-400">Available</p>
+                <p className="text-2xl font-bold text-yellow-400" data-testid="project-remaining">
+                  {formatCurrency(project.allocated_funds - project.spent_funds)}
                 </p>
+                <p className="text-xs text-slate-500">Can be spent</p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-400">Budget Utilization</span>
-                <span className="text-white font-semibold">{progress.toFixed(1)}%</span>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Fund Allocation Progress</span>
+                  <span className="text-white font-semibold">{((project.allocated_funds / project.budget) * 100).toFixed(1)}%</span>
+                </div>
+                <div className="h-3 bg-slate-800 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-to-r from-green-500 to-green-600 transition-all"
+                    style={{width: `${Math.min((project.allocated_funds / project.budget) * 100, 100)}%`}}
+                  ></div>
+                </div>
+                <div className="flex justify-between text-xs text-slate-500">
+                  <span>Allocated: {formatCurrency(project.allocated_funds)}</span>
+                  <span>Unallocated: {formatCurrency(project.budget - project.allocated_funds)}</span>
+                </div>
               </div>
-              <Progress value={progress} className="h-3" />
+
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Spending Progress</span>
+                  <span className="text-white font-semibold">{progress.toFixed(1)}%</span>
+                </div>
+                <Progress value={progress} className="h-3" />
+                <div className="flex justify-between text-xs text-slate-500">
+                  <span>Spent: {formatCurrency(project.spent_funds)}</span>
+                  <span>Budget: {formatCurrency(project.budget)}</span>
+                </div>
+              </div>
             </div>
 
             <div className="flex items-center justify-between pt-4 border-t border-slate-700">
