@@ -281,6 +281,9 @@ const Dashboard = ({ account }) => {
                         <div className="space-y-1">
                           <CardTitle className="text-xl text-white">{project.name}</CardTitle>
                           <p className="text-sm text-slate-400">{project.description}</p>
+                          <span className="inline-block mt-2 px-2 py-1 text-xs rounded-full bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                            {project.category}
+                          </span>
                         </div>
                         <span className={project.status === 'Active' ? 'status-active' : 'status-completed'}>
                           {project.status}
