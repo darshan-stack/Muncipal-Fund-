@@ -293,13 +293,19 @@ const Dashboard = ({ account }) => {
                     <CardContent className="space-y-4">
                       <div className="space-y-2">
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-400">Budget Progress</span>
+                          <span className="text-slate-400">Spending Progress</span>
                           <span className="text-white font-semibold">{progress.toFixed(1)}%</span>
                         </div>
                         <Progress value={progress} className="h-2" />
                         <div className="flex justify-between text-sm">
-                          <span className="text-slate-500">Spent: {formatCurrency(project.spent_funds)}</span>
-                          <span className="text-slate-500">Budget: {formatCurrency(project.budget)}</span>
+                          <div className="space-y-1">
+                            <div className="text-slate-500">Allocated: {formatCurrency(project.allocated_funds)}</div>
+                            <div className="text-slate-500">Spent: {formatCurrency(project.spent_funds)}</div>
+                          </div>
+                          <div className="text-right space-y-1">
+                            <div className="text-slate-500">Budget: {formatCurrency(project.budget)}</div>
+                            <div className="text-yellow-400 font-medium">Available: {formatCurrency(project.allocated_funds - project.spent_funds)}</div>
+                          </div>
                         </div>
                       </div>
 
