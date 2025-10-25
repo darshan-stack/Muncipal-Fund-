@@ -381,6 +381,9 @@ startxref
                 self.log_result("Get Pending Approvals", False, "No authority ID available")
                 return False
             
+            # Wait a moment for the approval to be processed
+            time.sleep(1)
+            
             response = self.session.get(f"{API_URL}/approvals/pending/{self.test_data['authority_id']}")
             
             if response.status_code == 200:
@@ -404,7 +407,7 @@ startxref
                             return False
                     else:
                         self.log_result("Get Pending Approvals", True, 
-                                      "No pending approvals (expected after submission)")
+                                      "No pending approvals found")
                     return True
                 else:
                     self.log_result("Get Pending Approvals", False, "Invalid response format", response)
