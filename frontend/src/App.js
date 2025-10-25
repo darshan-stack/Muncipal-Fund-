@@ -169,10 +169,14 @@ function App() {
           />
           <Route 
             path="/authority/login" 
-            element={<AuthorityWalletDashboard account={account} onDisconnect={disconnectWallet} />} 
+            element={<AuthorityLogin />} 
           />
           <Route 
             path="/authority/dashboard" 
+            element={<AuthorityDashboard />} 
+          />
+          <Route 
+            path="/authority/wallet" 
             element={<AuthorityWalletDashboard account={account} onDisconnect={disconnectWallet} />} 
           />
         </Routes>
