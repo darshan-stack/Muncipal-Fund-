@@ -19,7 +19,9 @@ const CreateProject = ({ account, signer }) => {
     name: '',
     description: '',
     category: 'Infrastructure',
-    budget: ''
+    budget: '',
+    contractor_name: '',
+    contractor_wallet: ''
   });
 
   const handleChange = (e) => {
