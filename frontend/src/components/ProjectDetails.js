@@ -173,6 +173,15 @@ const ProjectDetails = ({ account, signer }) => {
     });
   };
 
+  const handleVerifyTransaction = (txHash, type, details) => {
+    setVerificationModal({
+      isOpen: true,
+      txHash,
+      type,
+      details
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
