@@ -48,9 +48,25 @@ const TransactionVerificationModal = ({ isOpen, onClose, txHash, type, details }
                 <p className="text-sm font-medium text-blue-400">MVP Mode - Simulated Transaction</p>
                 <p className="text-xs text-slate-400">
                   This platform is running in MVP mode with simulated blockchain transactions. 
-                  In production, deploy the smart contract to see real on-chain transactions.
+                  The transaction hash is generated locally and won't appear on PolygonScan.
+                </p>
+                <p className="text-xs text-blue-300 mt-2">
+                  To see real transactions: Deploy the smart contract (guide in /app/contracts/README.md)
                 </p>
               </div>
+            </div>
+          </div>
+
+          {/* How to Get Real Transactions */}
+          <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-green-400">Want Real Blockchain Transactions?</p>
+              <ol className="text-xs text-slate-400 space-y-1 ml-4 list-decimal">
+                <li>Get test MATIC from: https://faucet.polygon.technology/</li>
+                <li>Deploy FundTracker.sol using Remix IDE</li>
+                <li>Update CONTRACT_ADDRESS in backend/.env</li>
+                <li>All new transactions will be real and verifiable!</li>
+              </ol>
             </div>
           </div>
 
