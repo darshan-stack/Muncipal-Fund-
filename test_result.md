@@ -171,7 +171,7 @@ backend:
 frontend:
   - task: "Authority Wallet Dashboard"
     implemented: true
-    working: false
+    working: true
     file: "/app/frontend/src/components/AuthorityWalletDashboard.js"
     stuck_count: 2
     priority: "high"
@@ -186,10 +186,13 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ISSUE: Authority Wallet Dashboard redirects to home page when no wallet connected. Component logic correctly requires wallet connection but there's no fallback UI. Routes /authority/login and /authority/dashboard both use AuthorityWalletDashboard component, but should have separate login form for username/password auth. AuthorityLogin component exists but not used in routing."
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED & TESTED: Authority Wallet Dashboard now working correctly after routing fix. Component properly redirects to home when no wallet connected (correct behavior). New /authority/wallet route works as expected. Wallet-based authority access requires MetaMask connection and authorized wallet address. Document viewing and approval functionality available for wallet-connected authorities."
         
   - task: "Authority Dashboard (Username/Password)"
-    implemented: false
-    working: false
+    implemented: true
+    working: true
     file: "/app/frontend/src/components/AuthorityDashboard.js"
     stuck_count: 1
     priority: "high"
@@ -201,6 +204,9 @@ frontend:
       - working: false
         agent: "testing"
         comment: "❌ CRITICAL ROUTING ISSUE: AuthorityLogin component exists but not used in App.js routing. Both /authority/login and /authority/dashboard routes use AuthorityWalletDashboard instead of providing username/password login form. This breaks the traditional authority login workflow completely."
+      - working: true
+        agent: "testing"
+        comment: "✅ FIXED & TESTED: Authority Dashboard (Username/Password) now fully working after routing fix. /authority/login route correctly shows AuthorityLogin component with username/password form. /authority/dashboard route shows AuthorityDashboard component after successful login. Complete approval workflow tested: login → view pending approvals → review projects → approve/reject → success messages → project removal from pending list. Authority name displays correctly, logout works, session management functional. Contractor information properly anonymized during review process."
         
   - task: "Create Project With Documents"
     implemented: true
