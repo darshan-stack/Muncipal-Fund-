@@ -64,6 +64,8 @@ const CreateProject = ({ account, signer }) => {
         description: formData.description,
         category: formData.category,
         budget: parseFloat(formData.budget),
+        contractor_name: formData.contractor_name,
+        contractor_wallet: formData.contractor_wallet || account,
         manager_address: account,
         tx_hash: simulatedTxHash,
         contract_project_id: Math.floor(Math.random() * 10000)
