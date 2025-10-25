@@ -471,6 +471,24 @@ const ProjectDetails = ({ account, signer }) => {
                         </select>
                       </div>
                       <div className="space-y-2">
+                        <Label htmlFor="exp-category" className="text-slate-300">Category</Label>
+                        <select
+                          id="exp-category"
+                          value={expenditureForm.category}
+                          onChange={(e) => setExpenditureForm({ ...expenditureForm, category: e.target.value })}
+                          className="w-full px-3 py-2 bg-slate-800 border border-slate-700 rounded-md text-white"
+                          data-testid="expenditure-category-select"
+                        >
+                          <option value="Materials">Materials</option>
+                          <option value="Labor">Labor</option>
+                          <option value="Equipment">Equipment</option>
+                          <option value="Services">Services</option>
+                          <option value="Permits">Permits & Licenses</option>
+                          <option value="General">General</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                      <div className="space-y-2">
                         <Label htmlFor="exp-amount" className="text-slate-300">Amount (USD)</Label>
                         <Input
                           id="exp-amount"
