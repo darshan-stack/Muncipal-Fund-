@@ -363,6 +363,15 @@ const Dashboard = ({ account }) => {
           )}
         </div>
       </div>
+
+      {/* Transaction Verification Modal */}
+      <TransactionVerificationModal
+        isOpen={verificationModal.isOpen}
+        onClose={() => setVerificationModal({ isOpen: false, txHash: '', type: '', details: {} })}
+        txHash={verificationModal.txHash}
+        type={verificationModal.type}
+        details={verificationModal.details}
+      />
     </div>
   );
 };
