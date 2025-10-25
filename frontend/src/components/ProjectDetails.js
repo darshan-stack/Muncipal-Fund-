@@ -32,6 +32,24 @@ const ProjectDetails = ({ account, signer }) => {
     type: '',
     details: {}
   });
+  const [submittingApproval, setSubmittingApproval] = useState(false);
+
+  const handleSubmitForApproval = async () => {
+    try {
+      setSubmittingApproval(true);
+      const response = await axios.post(`${API}/projects/${id}/submit-approval`);
+      
+      if (response.data.success) {
+        toast.success('Project submitted for approval!');
+        fetchProjectData();
+      }
+    } catch (error) {
+      console.error('Error submitting for approval:', error);
+      toast.error(error.response?.data?.detail || 'Failed to submit for approval');
+    } finally {
+      setSubmittingApproval(false);
+    }
+  };
 
   const [milestoneForm, setMilestoneForm] = useState({
     name: '',
