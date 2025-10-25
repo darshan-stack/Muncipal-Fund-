@@ -166,6 +166,14 @@ function App() {
             path="/transactions" 
             element={<TransactionHistory />} 
           />
+          <Route 
+            path="/authority/login" 
+            element={<AuthorityLogin onLoginSuccess={() => {}} />} 
+          />
+          <Route 
+            path="/authority/dashboard" 
+            element={<AuthorityDashboard />} 
+          />
         </Routes>
       </BrowserRouter>
       <Toaster position="top-right" richColors />
