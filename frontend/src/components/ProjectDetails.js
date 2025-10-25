@@ -434,16 +434,18 @@ const ProjectDetails = ({ account, signer }) => {
                           </div>
 
                           {milestone.tx_hash && (
-                            <a
-                              href={`https://mumbai.polygonscan.com/tx/${milestone.tx_hash}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                            <button
+                              onClick={() => handleVerifyTransaction(
+                                milestone.tx_hash,
+                                'milestone_create',
+                                { milestone_name: milestone.name, target_amount: milestone.target_amount }
+                              )}
                               className="inline-flex items-center space-x-2 text-sm text-blue-400 hover:text-blue-300"
                               data-testid={`milestone-tx-${index}`}
                             >
                               <ExternalLink className="w-3 h-3" />
                               <span>View Transaction</span>
-                            </a>
+                            </button>
                           )}
                         </div>
                       </CardContent>
