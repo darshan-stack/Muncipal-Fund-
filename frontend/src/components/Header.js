@@ -67,6 +67,17 @@ const Header = ({ account, chainId, onConnect, onDisconnect, isConnecting }) => 
               >
                 Transactions
               </Link>
+              <Link
+                to="/authority/login"
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  isActive('/authority/login') || isActive('/authority/dashboard')
+                    ? 'bg-purple-500/20 text-purple-400' 
+                    : 'text-slate-300 hover:text-white hover:bg-slate-800/50'
+                }`}
+                data-testid="nav-authority"
+              >
+                🔒 Authority
+              </Link>
             </nav>
           </div>
 
