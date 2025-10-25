@@ -34,6 +34,7 @@ class Project(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     name: str
     description: str
+    category: str = "Infrastructure"  # Infrastructure, Education, Healthcare, Environment, etc.
     budget: float
     allocated_funds: float = 0.0
     spent_funds: float = 0.0
@@ -46,10 +47,28 @@ class Project(BaseModel):
 class ProjectCreate(BaseModel):
     name: str
     description: str
+    category: str
     budget: float
     manager_address: str
     tx_hash: Optional[str] = None
     contract_project_id: Optional[int] = None
+
+class FundAllocation(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    project_id: str
+    amount: float
+    allocated_by: str
+    purpose: str
+    tx_hash: str
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
+class FundAllocationCreate(BaseModel):
+    project_id: str
+    amount: float
+    allocated_by: str
+    purpose: str
+    tx_hash: str
 
 class Milestone(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -82,6 +101,7 @@ class Expenditure(BaseModel):
     project_id: str
     milestone_id: Optional[str] = None
     amount: float
+    category: str = "General"  # Materials, Labor, Equipment, Services, etc.
     description: str
     recipient: str
     tx_hash: str
@@ -92,6 +112,7 @@ class ExpenditureCreate(BaseModel):
     project_id: str
     milestone_id: Optional[str] = None
     amount: float
+    category: str
     description: str
     recipient: str
     tx_hash: str
@@ -145,7 +166,7 @@ async def create_project(input: ProjectCreate):
             tx_hash=input.tx_hash,
             type="project_create",
             project_id=project_obj.id,
-            details={"name": input.name, "budget": input.budget}
+            details={"name": input.name, "budget": input.budget, "category": input.category}
         )
         tx_doc = tx_record.model_dump()
         tx_doc['timestamp'] = tx_doc['timestamp'].isoformat()
@@ -169,6 +190,49 @@ async def get_project(project_id: str):
     if isinstance(project['created_at'], str):
         project['created_at'] = datetime.fromisoformat(project['created_at'])
     return project
+
+# Fund Allocation endpoints
+@api_router.post("/allocations", response_model=FundAllocation)
+async def allocate_funds(input: FundAllocationCreate):
+    # Verify project exists
+    project = await db.projects.find_one({"id": input.project_id})
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    allocation_dict = input.model_dump()
+    allocation_obj = FundAllocation(**allocation_dict)
+    
+    doc = allocation_obj.model_dump()
+    doc['timestamp'] = doc['timestamp'].isoformat()
+    
+    await db.fund_allocations.insert_one(doc)
+    
+    # Update project allocated funds
+    await db.projects.update_one(
+        {"id": input.project_id},
+        {"$inc": {"allocated_funds": input.amount}}
+    )
+    
+    # Record transaction
+    tx_record = Transaction(
+        tx_hash=input.tx_hash,
+        type="fund_allocation",
+        project_id=input.project_id,
+        details={"amount": input.amount, "purpose": input.purpose}
+    )
+    tx_doc = tx_record.model_dump()
+    tx_doc['timestamp'] = tx_doc['timestamp'].isoformat()
+    await db.transactions.insert_one(tx_doc)
+    
+    return allocation_obj
+
+@api_router.get("/allocations/{project_id}", response_model=List[FundAllocation])
+async def get_project_allocations(project_id: str):
+    allocations = await db.fund_allocations.find({"project_id": project_id}, {"_id": 0}).to_list(1000)
+    for alloc in allocations:
+        if isinstance(alloc['timestamp'], str):
+            alloc['timestamp'] = datetime.fromisoformat(alloc['timestamp'])
+    return allocations
 
 # Milestone endpoints
 @api_router.post("/milestones", response_model=Milestone)
@@ -281,6 +345,7 @@ async def create_expenditure(input: ExpenditureCreate):
         project_id=input.project_id,
         details={
             "amount": input.amount,
+            "category": input.category,
             "description": input.description,
             "recipient": input.recipient
         }
@@ -343,10 +408,26 @@ async def get_stats():
     completed_milestones = await db.milestones.count_documents({"status": "Completed"})
     total_expenditures = await db.expenditures.count_documents({})
     
-    # Calculate total budget and spent
+    # Calculate total budget, allocated, and spent
     projects = await db.projects.find({}, {"_id": 0}).to_list(1000)
     total_budget = sum(p.get('budget', 0) for p in projects)
+    total_allocated = sum(p.get('allocated_funds', 0) for p in projects)
     total_spent = sum(p.get('spent_funds', 0) for p in projects)
+    
+    # Category breakdown
+    expenditures = await db.expenditures.find({}, {"_id": 0}).to_list(1000)
+    category_spending = {}
+    for exp in expenditures:
+        category = exp.get('category', 'General')
+        category_spending[category] = category_spending.get(category, 0) + exp.get('amount', 0)
+    
+    # Project category breakdown
+    project_category_budget = {}
+    project_category_spent = {}
+    for p in projects:
+        category = p.get('category', 'Other')
+        project_category_budget[category] = project_category_budget.get(category, 0) + p.get('budget', 0)
+        project_category_spent[category] = project_category_spent.get(category, 0) + p.get('spent_funds', 0)
     
     return {
         "total_projects": total_projects,
@@ -355,8 +436,16 @@ async def get_stats():
         "completed_milestones": completed_milestones,
         "total_expenditures": total_expenditures,
         "total_budget": total_budget,
+        "total_allocated": total_allocated,
         "total_spent": total_spent,
-        "utilization_rate": (total_spent / total_budget * 100) if total_budget > 0 else 0
+        "unallocated_funds": total_budget - total_allocated,
+        "allocated_unspent": total_allocated - total_spent,
+        "budget_utilization": (total_spent / total_budget * 100) if total_budget > 0 else 0,
+        "allocation_rate": (total_allocated / total_budget * 100) if total_budget > 0 else 0,
+        "spending_rate": (total_spent / total_allocated * 100) if total_allocated > 0 else 0,
+        "expenditure_by_category": category_spending,
+        "budget_by_project_category": project_category_budget,
+        "spent_by_project_category": project_category_spent
     }
 
 # Include router
