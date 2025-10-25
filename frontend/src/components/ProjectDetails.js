@@ -35,6 +35,7 @@ const ProjectDetails = ({ account, signer }) => {
   const [expenditureForm, setExpenditureForm] = useState({
     milestone_id: '',
     amount: '',
+    category: 'General',
     description: '',
     recipient: ''
   });
