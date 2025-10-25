@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import '@/App.css';
 import Dashboard from './components/Dashboard';
 import ProjectDetails from './components/ProjectDetails';
-import CreateProject from './components/CreateProject';
+import CreateProjectWithDocuments from './components/CreateProjectWithDocuments';
 import TransactionHistory from './components/TransactionHistory';
 import AuthorityLogin from './components/AuthorityLogin';
 import AuthorityDashboard from './components/AuthorityDashboard';
