@@ -56,6 +56,15 @@ const Dashboard = ({ account }) => {
     return Math.min((spent / budget) * 100, 100);
   };
 
+  const handleVerifyTransaction = (txHash, type, details) => {
+    setVerificationModal({
+      isOpen: true,
+      txHash,
+      type: type || 'project_create',
+      details: details || {}
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
